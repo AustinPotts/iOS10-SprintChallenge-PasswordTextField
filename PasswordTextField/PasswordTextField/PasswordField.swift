@@ -8,10 +8,33 @@
 
 import UIKit
 
+//Create an enum for the strenght levels
+enum PasswordStrengthLevel: Int {
+    case none = 0
+    case weak = 5
+    case medium = 9
+    case strong = 20
+    
+    var toString: String {
+        switch self {
+        case .none:
+            return "empty"
+        case .weak:
+            return "weak"
+        case .medium:
+            return "medium"
+        case .strong:
+            return "strong"
+        }
+    }
+}
+
+
 class PasswordField: UIControl {
     
     // Public API - these properties are used to fetch the final password and strength values
     private (set) var password: String = ""
+    private (set) var passwordStrength = PasswordStrengthLevel.weak //This needs to be set as the default use
     
     private let standardMargin: CGFloat = 8.0
     private let textFieldContainerHeight: CGFloat = 50.0
@@ -37,6 +60,12 @@ class PasswordField: UIControl {
     private var mediumView: UIView = UIView()
     private var strongView: UIView = UIView()
     private var strengthDescriptionLabel: UILabel = UILabel()
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setup()
+    }
+
     
     func setup() {
         // Lay out your subviews here
@@ -79,10 +108,61 @@ class PasswordField: UIControl {
         showHideButton.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
         showHideButton.addTarget(self, action: #selector(eyeHidePassword(sender:)), for: .touchUpInside)
         
+        //The views for Color Indicators
+        
+        for view in [weakView, mediumView, strongView]{
+            view.backgroundColor = unusedColor
+            view.translatesAutoresizingMaskIntoConstraints = false
+            
+            view.heightAnchor.constraint(equalToConstant: colorViewSize.height).isActive = true
+            view.widthAnchor.constraint(equalToConstant: colorViewSize.width).isActive = true
+        }
+        
+        
+    }
+    
+    //Create a function that determines the strenght of the password entered
+    private func figureStrengthPassword(of password: String){
+        
+        //make a switch case for testing. fo
+            switch password.count {
+            case (PasswordStrengthLevel.none.rawValue + 1)...PasswordStrengthLevel.weak.rawValue:
+            passwordStrength = .weak
+            case (PasswordStrengthLevel.weak.rawValue + 1)...PasswordStrengthLevel.medium.rawValue:
+            passwordStrength = .medium
+            case (PasswordStrengthLevel.medium.rawValue + 1)...PasswordStrengthLevel.strong.rawValue:
+            passwordStrength = .strong
+            default:
+            passwordStrength = .none
+            }
+            
+            if UIReferenceLibraryViewController.dictionaryHasDefinition(forTerm: password) {
+            switch passwordStrength {
+            case .strong:
+            passwordStrength = .medium
+            case .medium:
+            passwordStrength = .weak
+            default:
+            passwordStrength = .none
+            }
+            }
+            
+            self.password = password
+            changeStrengthColor() // Create a function to change the color view
+            sendActions(for: [.valueChanged])
+        
+    }
+    
+    
+    //Function to change the color of the password strength
+    private func changeStrengthColor(){
+        
         
         
         
     }
+    
+    
     
     //Create the function for the eye hider
     @objc func eyeHidePassword(sender: UIButton) {
@@ -90,11 +170,10 @@ class PasswordField: UIControl {
         showHideButton.setImage(UIImage(named: textField.isSecureTextEntry ? "eyesOpen" : "eyesClosed"), for: .normal)
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setup()
-    }
 }
+
+
+
 
 extension PasswordField: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -102,6 +181,8 @@ extension PasswordField: UITextFieldDelegate {
         let stringRange = Range(range, in: oldText)!
         let newText = oldText.replacingCharacters(in: stringRange, with: string)
         // TODO: send new text to the determine strength method
+        
+        
         return true
     }
 }
