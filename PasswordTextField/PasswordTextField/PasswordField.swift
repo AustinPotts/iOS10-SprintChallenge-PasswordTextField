@@ -95,6 +95,7 @@ class PasswordField: UIControl {
         textField.rightViewMode = .always
         textField.isSecureTextEntry = true
         
+        
         addSubview(textField)
         //Constrain the text field created
         textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: standardMargin).isActive = true
@@ -102,11 +103,11 @@ class PasswordField: UIControl {
         textField.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -standardMargin).isActive = true
         textField.heightAnchor.constraint(equalToConstant: textFieldContainerHeight).isActive = true
         
-        //ShowHideBtn
+        //Show hide button
         
         showHideButton.setImage(UIImage(named: "eyes-closed"), for: .normal)
         showHideButton.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
-        showHideButton.addTarget(self, action: #selector(eyeHidePassword(sender:)), for: .touchUpInside)
+        showHideButton.addTarget(self, action: #selector(eyeHidePassword), for: .touchUpInside)
         
         //The views for Color Indicators
         
@@ -228,8 +229,18 @@ extension PasswordField: UITextFieldDelegate {
         let stringRange = Range(range, in: oldText)!
         let newText = oldText.replacingCharacters(in: stringRange, with: string)
         // TODO: send new text to the determine strength method
+        if newText.count <= PasswordStrengthLevel.strong.rawValue {
+            figureStrengthPassword(of: newText)
+            return true
+        }
         
-        
+        return false
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        endEditing(true)
         return true
     }
+        
+        
 }
