@@ -41,8 +41,39 @@ class PasswordField: UIControl {
     func setup() {
         // Lay out your subviews here
         
-        addSubview(titleLabel)
+        backgroundColor = bgColor
+        
+        //Create the label
+        titleLabel.text = "If your password sucks, i'll let you know"
+        titleLabel.textColor = labelTextColor
+        titleLabel.font = labelFont
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(titleLabel)
+        //Constrain the label created
+        titleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: standardMargin).isActive = true
+        titleLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: standardMargin).isActive = true
+        
+        
+        //Password Text field, create the text field
+        textField.delegate = self
+        textField.backgroundColor = .clear
+        textField.borderStyle = .roundedRect
+        textField.layer.borderWidth = 3
+        textField.layer.borderColor = textFieldBorderColor.cgColor
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.isSecureTextEntry = true
+        
+        addSubview(textField)
+        //Constrain the text field created
+        textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: standardMargin).isActive = true
+        textField.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: standardMargin).isActive = true
+        textField.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -standardMargin).isActive = true
+        textField.heightAnchor.constraint(equalToConstant: textFieldContainerHeight).isActive = true
+        
+        
+        
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
