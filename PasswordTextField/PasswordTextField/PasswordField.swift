@@ -62,6 +62,8 @@ class PasswordField: UIControl {
         textField.layer.borderWidth = 3
         textField.layer.borderColor = textFieldBorderColor.cgColor
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.rightView = showHideButton
+        textField.rightViewMode = .always
         textField.isSecureTextEntry = true
         
         addSubview(textField)
@@ -71,9 +73,21 @@ class PasswordField: UIControl {
         textField.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -standardMargin).isActive = true
         textField.heightAnchor.constraint(equalToConstant: textFieldContainerHeight).isActive = true
         
+        //ShowHideBtn
+        
+        showHideButton.setImage(UIImage(named: "eyes-closed"), for: .normal)
+        showHideButton.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+        showHideButton.addTarget(self, action: #selector(eyeHidePassword(sender:)), for: .touchUpInside)
         
         
         
+        
+    }
+    
+    //Create the function for the eye hider
+    @objc func eyeHidePassword(sender: UIButton) {
+        textField.isSecureTextEntry.toggle()
+        showHideButton.setImage(UIImage(named: textField.isSecureTextEntry ? "eyesOpen" : "eyesClosed"), for: .normal)
     }
     
     required init?(coder aDecoder: NSCoder) {

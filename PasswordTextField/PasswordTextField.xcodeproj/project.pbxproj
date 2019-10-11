@@ -37,9 +37,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4547308C2350D4AC00EB74F4 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		CE0883BD22C2C575008F9894 = {
 			isa = PBXGroup;
 			children = (
+				4547308C2350D4AC00EB74F4 /* View */,
 				CE0883C822C2C575008F9894 /* PasswordTextField */,
 				CE0883C722C2C575008F9894 /* Products */,
 			);
