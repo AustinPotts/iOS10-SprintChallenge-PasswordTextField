@@ -118,6 +118,30 @@ class PasswordField: UIControl {
             view.widthAnchor.constraint(equalToConstant: colorViewSize.width).isActive = true
         }
         
+        //Putting them into stack view
+        
+        let colorStackView = UIStackView(arrangedSubviews: [weakView, mediumView, strongView])
+        colorStackView.translatesAutoresizingMaskIntoConstraints = false
+        colorStackView.spacing = 3
+        
+        //Strength DescriptionLbl
+        
+        strengthDescriptionLabel.font = labelFont
+        strengthDescriptionLabel.textColor = labelTextColor
+        
+        //StrengthStack,
+        
+        let strengthStackView = UIStackView(arrangedSubviews: [colorStackView, strengthDescriptionLabel])
+        strengthStackView.translatesAutoresizingMaskIntoConstraints = false
+        strengthStackView.alignment = .center
+        strengthStackView.spacing = standardMargin
+        
+        addSubview(strengthStackView)
+        
+        strengthStackView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: standardMargin).isActive = true
+        strengthStackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: standardMargin).isActive = true
+        strengthStackView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -standardMargin).isActive = true
+        
         
     }
     
@@ -156,7 +180,25 @@ class PasswordField: UIControl {
     
     //Function to change the color of the password strength
     private func changeStrengthColor(){
-        
+        //Make a switch case that will change the strength color depending on the strength case enum
+        switch passwordStrength {
+        case .none:
+            weakView.backgroundColor = unusedColor   //All gray
+            mediumView.backgroundColor = unusedColor
+            strongView.backgroundColor = unusedColor
+        case .weak:
+            weakView.backgroundColor = weakColor
+            mediumView.backgroundColor = unusedColor    //Only use the weak color, rest gray
+            strongView.backgroundColor = unusedColor
+        case .medium:
+            weakView.backgroundColor = weakColor //Activate both weak color & medium color, strong = gray
+            mediumView.backgroundColor = mediumColor
+            strongView.backgroundColor = unusedColor
+        case .strong:
+            weakView.backgroundColor = weakColor //Activate all since the password is strong
+            mediumView.backgroundColor = mediumColor
+            strongView.backgroundColor = strongColor
+        }
         
         
         
@@ -168,6 +210,11 @@ class PasswordField: UIControl {
     @objc func eyeHidePassword(sender: UIButton) {
         textField.isSecureTextEntry.toggle()
         showHideButton.setImage(UIImage(named: textField.isSecureTextEntry ? "eyesOpen" : "eyesClosed"), for: .normal)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        endEditing(true)
     }
     
 }
