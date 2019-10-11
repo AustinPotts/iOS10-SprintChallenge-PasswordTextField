@@ -84,11 +84,18 @@ class PasswordField: UIControl {
         titleLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: standardMargin).isActive = true
         
         
+        //Show hide button
+        
+        showHideButton.setImage(UIImage(named: "eyes-closed"), for: .normal)
+        showHideButton.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+        showHideButton.addTarget(self, action: #selector(eyeHidePassword), for: .touchUpInside)
+        
+        
         //Password Text field, create the text field
         textField.delegate = self
         textField.backgroundColor = .clear
         textField.borderStyle = .roundedRect
-        textField.layer.borderWidth = 3
+        textField.layer.borderWidth = 2
         textField.layer.borderColor = textFieldBorderColor.cgColor
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.rightView = showHideButton
@@ -103,11 +110,7 @@ class PasswordField: UIControl {
         textField.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -standardMargin).isActive = true
         textField.heightAnchor.constraint(equalToConstant: textFieldContainerHeight).isActive = true
         
-        //Show hide button
-        
-        showHideButton.setImage(UIImage(named: "eyes-closed"), for: .normal)
-        showHideButton.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
-        showHideButton.addTarget(self, action: #selector(eyeHidePassword), for: .touchUpInside)
+       
         
         //The views for Color Indicators
         
@@ -146,6 +149,12 @@ class PasswordField: UIControl {
         
     }
     
+    //Create the function for the eye hider
+    @objc func eyeHidePassword(sender: UIButton) {
+        textField.isSecureTextEntry.toggle()
+        showHideButton.setImage(UIImage(named: textField.isSecureTextEntry ? "eyesOpen" : "eyesClosed"), for: .normal)
+    }
+    
     //Create a function that determines the strenght of the password entered
     private func figureStrengthPassword(of password: String){
         
@@ -161,16 +170,7 @@ class PasswordField: UIControl {
             passwordStrength = .none
             }
             
-            if UIReferenceLibraryViewController.dictionaryHasDefinition(forTerm: password) {
-            switch passwordStrength {
-            case .strong:
-            passwordStrength = .medium
-            case .medium:
-            passwordStrength = .weak
-            default:
-            passwordStrength = .none
-            }
-            }
+           
             
             self.password = password
             changeStrengthColor() // Create a function to change the color view
@@ -205,13 +205,6 @@ class PasswordField: UIControl {
         
     }
     
-    
-    
-    //Create the function for the eye hider
-    @objc func eyeHidePassword(sender: UIButton) {
-        textField.isSecureTextEntry.toggle()
-        showHideButton.setImage(UIImage(named: textField.isSecureTextEntry ? "eyesOpen" : "eyesClosed"), for: .normal)
-    }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
